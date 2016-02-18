@@ -1,6 +1,6 @@
 {
   "name": "pac-line-by-line",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A NodeJS module that helps you reading large text files, line by line, without buffering the files into memory.",
   "main": "line-by-line.js",
   "dependencies": {},
