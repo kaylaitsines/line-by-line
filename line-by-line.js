@@ -11,6 +11,7 @@
 var path = require('path');
 var fs = require('fs');
 var events = require("events");
+var Q = require('q');
 
 // let's make sure we have a setImmediate function (node.js <0.10)
 if (typeof global.setImmediate == 'undefined') { setImmediate = process.nextTick;}
@@ -37,6 +38,9 @@ var LineByLineReader = function (filepath, options) {
 	this._paused = false;
 	this._end = false;
 	this._ended = false;
+
+	this._defers = [];
+	this._resolved = 0;
 
 	events.EventEmitter.call(this);
 
@@ -65,6 +69,8 @@ LineByLineReader.prototype._initStream = function () {
 	});
 
 	readStream.on('data', function (data) {
+		self._defers.push(Q.defer());
+
 		self._readStream.pause();
 		self._lines = self._lines.concat(data.split(/(?:\n|\r\n|\r)/g));
 
@@ -77,10 +83,18 @@ LineByLineReader.prototype._initStream = function () {
 	});
 
 	readStream.on('end', function () {
-		self._end = true;
+		var promises = [];
 
-		setImmediate(function () {
-			self._nextLine();
+		for (var i = 0; i < self._defers.length; i++) {
+			promises.push(self._defers[i].promise);
+		}
+
+		Q.all(promises).then(function() {
+			self._end = true;
+
+			setImmediate(function () {
+				self._nextLine();
+			});
 		});
 	});
 
@@ -113,6 +127,13 @@ LineByLineReader.prototype._nextLine = function () {
 		} else {
 			this._readStream.resume();
 		}
+
+		self._resolved++;
+
+		if (self._resolved <= self._defers.length) {
+			self._defers[self._resolved - 1].resolve();
+		}
+
 		return;
 	}
 
