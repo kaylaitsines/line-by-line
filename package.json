@@ -1,12 +1,13 @@
 {
   "name": "pac-line-by-line",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A NodeJS module that helps you reading large text files, line by line, without buffering the files into memory.",
   "main": "line-by-line.js",
-  "dependencies": {},
-  "devDependencies": {
-    "jshint": "2.5.x",
+  "dependencies": {
     "q": "^1.4.1"
+  },
+  "devDependencies": {
+    "jshint": "2.5.x"
   },
   "scripts": {
     "test": "jshint ."
