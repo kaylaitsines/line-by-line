@@ -5,14 +5,14 @@ without buffering the files into memory.
 
 Installation:
 
-    npm install line-by-line
+    npm install pac-line-by-line
 
 
 ## Usage:
 
 Synchronous processing of lines:
 
-	var LineByLineReader = require('line-by-line'),
+	var LineByLineReader = require('pac-line-by-line'),
 	    lr = new LineByLineReader('big_file.txt');
 
 	lr.on('error', function (err) {
